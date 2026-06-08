@@ -5,6 +5,25 @@
   const project = (postcode, address, service) => ({ postcode, address, service });
 
   const projectYears = {
+    "2022": [
+      project("RG22 5AH", "38 Cambrian Way", "Residential planning drawings"),
+      project("KT5 9JP", "73 Elgar Avenue", "Extension plans and elevations"),
+      project("WV13 1DA", "8 Leveson Street", "Existing plans and elevations"),
+      project("B66 4BW", "618-620 Bearwood Road", "HMO design and technical plans"),
+      project("UB3 1TE", "168 Waltham Avenue", "Residential planning drawings"),
+      project("WV8 2HY", "Tamar House, Strawmoor Lane", "Extension and Building Regulations design"),
+      project("B16 9SU", "83 Stanmore Road", "Conversion design and site coordination"),
+      project("TW19 7BE", "22 Genesis Close", "Drainage and build-over coordination"),
+      project("WD4 8JW", "Old Farm, Harthall Lane", "Existing survey and architectural plans"),
+      project("B70 9NF", "31 Hayes Street", "Loft conversion structural design"),
+      project("SL0 9PJ", "80 High Street", "Existing architectural survey"),
+      project("HP12 3NZ", "104 Deeds Grove", "Structural calculations and reports"),
+      project("SM1 3PJ", "23 Connaught Road", "Structural beam calculations"),
+      project("W7 3PH", "21 Montague Avenue", "Residential planning drawings"),
+      project("SO16 3BE", "250 Burgess Road", "Property survey and measured information"),
+      project("DY2 7DJ", "104 Dixons Green Road", "Residential design and technical drawings"),
+      project("UB8 3QU", "59 Royal Lane", "Structural design and calculations")
+    ],
     "2023": [
       project("UB6 8LR", "11 Norseman Way", "Residential survey and design"),
       project("UB7 9EX", "42 Blackthorn Avenue", "Residential design package"),
@@ -15,7 +34,16 @@
       project("WV2 2DU", "14 Rooker Crescent", "Building Regulations package"),
       project("WV6 0AX", "134 Sweetman Street", "Building Regulations package"),
       project("TW5 0AD", "9 and 11 Shenley Road", "Residential design and structures"),
-      project("WS3 2SQ", "2 Tintern Crescent", "Building Regulations package")
+      project("WS3 2SQ", "2 Tintern Crescent", "Building Regulations package"),
+      project("WV2 4NG", "9 Milford Road", "Structural connections and residential design"),
+      project("CV2 5FG", "82 Hipswell Highway", "Structural design and calculations"),
+      project("WV4 6DR", "18 Hilton Road", "Foundation and structural design"),
+      project("DE73 5NT", "20 Glen Park Close", "Residential structural design"),
+      project("WV10 0BD", "18 Newbolds Road", "Structural connection design"),
+      project("TW11 0ST", "71 Clonmel Road", "Two-storey extension design"),
+      project("SW15 3QQ", "9A Rydal Gardens", "Residential structural calculations"),
+      project("B16 9SU", "83 Stanmore Road", "Conversion and technical design"),
+      project("UB8 3QU", "59 Royal Lane", "Structural design and calculations")
     ],
     "2024": [
       project("UB10 9NG", "5 North Way", "Residential design package"),

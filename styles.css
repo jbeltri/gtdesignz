@@ -1464,7 +1464,7 @@ h3 {
   .map-toolbar {
     top: 10px;
     left: auto;
-    right: 10px;
+    right: 4px;
     gap: 3px;
     padding: 4px;
   }
