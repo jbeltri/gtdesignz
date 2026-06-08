@@ -242,18 +242,22 @@
 
     <section class="section map-section" id="locations">
       <div class="map-copy reveal">
-        <p class="eyebrow">2024 project reach</p>
+        <p class="eyebrow">Project reach</p>
         <h2>Projects grouped by borough</h2>
-        <p>Explore 2024 project locations identified from our design correspondence, grouped by local authority area.</p>
+        <p>Explore verified 2024 and 2025 project locations, grouped by local authority area.</p>
         <p class="map-hint"><i data-lucide="mouse-pointer-2"></i> Select a numbered borough marker to view project postcodes and services.</p>
       </div>
       <div class="map-frame">
         <div class="map-toolbar" aria-label="Map controls">
+          <div class="map-years" aria-label="Project year">
+            <button type="button" data-map-year="2024">2024</button>
+            <button type="button" data-map-year="2025" class="is-active">2025</button>
+          </div>
           <button type="button" data-map-action="in" aria-label="Zoom in" title="Zoom in"><i data-lucide="plus"></i></button>
           <button type="button" data-map-action="out" aria-label="Zoom out" title="Zoom out"><i data-lucide="minus"></i></button>
           <button type="button" data-map-action="all"><i data-lucide="maximize-2"></i><span>View all</span></button>
         </div>
-        <div id="project-map" aria-label="Interactive map of selected GT Designz project locations"></div>
+        <div id="project-map" aria-label="Interactive map of GT Designz project locations grouped by borough"></div>
       </div>
     </section>
 

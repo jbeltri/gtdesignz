@@ -74,7 +74,7 @@ const regions = [
   }
 ];
 
-const boroughs = [
+const boroughs2024 = [
   {
     name: "City of Wolverhampton",
     coords: [-2.128, 52.586],
@@ -113,6 +113,26 @@ const boroughs = [
   { name: "Stoke-on-Trent", coords: [-2.179, 53.003], projects: ["ST4 1DJ - heritage drawing coordination"] }
 ];
 
+const boroughs2025 = [
+  {
+    name: "London Borough of Hillingdon",
+    coords: [-0.45, 51.54],
+    projects: [
+      "UB7 9DW - extension, dormer and boiler room plans",
+      "UB8 3NU - structural design review",
+      "UB8 1AB - detailed architectural plans"
+    ]
+  },
+  { name: "Walsall", coords: [-1.982, 52.586], projects: ["WS2 0JL - beam and raft foundation calculations"] },
+  { name: "Sandwell", coords: [-2.01, 52.52], projects: ["B70 9TJ - raft foundation design and calculations"] },
+  { name: "Dudley", coords: [-2.082, 52.512], projects: ["B62 8SJ - vaulted ceiling and joist calculations"] },
+  { name: "Guildford", coords: [-0.57, 51.236], projects: ["GU1 4AW - Land Registry and lease plans"] },
+  { name: "City of Wolverhampton", coords: [-2.128, 52.586], projects: ["WV3 7DT - detailed plans, foundations and structural calculations"] },
+  { name: "Three Rivers", coords: [-0.4375, 51.7203], projects: ["WD4 8JW - householder extension and planning design"] }
+];
+
+const projectYears = { "2024": boroughs2024, "2025": boroughs2025 };
+
 if (document.querySelector("#project-map") && window.maplibregl) {
   const map = new maplibregl.Map({
     container: "project-map",
@@ -130,32 +150,53 @@ if (document.querySelector("#project-map") && window.maplibregl) {
 
   map.touchZoomRotate.disableRotation();
 
-  boroughs.forEach((borough) => {
-    const element = document.createElement("button");
-    element.className = "regional-marker";
-    element.type = "button";
-    element.title = borough.name;
-    const projectLabel = borough.projects.length === 1 ? "project" : "projects";
-    element.setAttribute("aria-label", `${borough.name}: ${borough.projects.length} ${projectLabel} in 2024`);
-    element.innerHTML = `<span>${borough.projects.length}</span>`;
+  let activeYear = "2025";
+  let mapMarkers = [];
 
-    const projectList = borough.projects.map((project) => `<li>${project}</li>`).join("");
-    const popup = new maplibregl.Popup({ offset: 30, closeButton: true })
-      .setHTML(`<strong>${borough.name}</strong><small>2024 projects</small><ul>${projectList}</ul>`);
+  const renderYear = (year) => {
+    activeYear = year;
+    mapMarkers.forEach((marker) => marker.remove());
+    mapMarkers = projectYears[year].map((borough) => {
+      const element = document.createElement("button");
+      element.className = "regional-marker";
+      element.type = "button";
+      element.title = borough.name;
+      const projectLabel = borough.projects.length === 1 ? "project" : "projects";
+      element.setAttribute("aria-label", `${borough.name}: ${borough.projects.length} ${projectLabel} in ${year}`);
+      element.innerHTML = `<span>${borough.projects.length}</span>`;
 
-    new maplibregl.Marker({ element, anchor: "bottom" })
-      .setLngLat(borough.coords)
-      .setPopup(popup)
-      .addTo(map);
-  });
+      const projectList = borough.projects.map((project) => `<li>${project}</li>`).join("");
+      const popup = new maplibregl.Popup({ offset: 30, closeButton: true })
+        .setHTML(`<strong>${borough.name}</strong><small>${year} projects</small><ul>${projectList}</ul>`);
+
+      return new maplibregl.Marker({ element, anchor: "bottom" })
+        .setLngLat(borough.coords)
+        .setPopup(popup)
+        .addTo(map);
+    });
+
+    document.querySelectorAll("[data-map-year]").forEach((button) => {
+      button.classList.toggle("is-active", button.dataset.mapYear === year);
+    });
+  };
 
   const showAll = () => {
     const bounds = new maplibregl.LngLatBounds();
-    boroughs.forEach((borough) => bounds.extend(borough.coords));
+    projectYears[activeYear].forEach((borough) => bounds.extend(borough.coords));
     map.fitBounds(bounds, { padding: 75, maxZoom: 6.2, duration: 700 });
   };
 
-  map.on("load", showAll);
+  map.on("load", () => {
+    renderYear(activeYear);
+    showAll();
+  });
+
+  document.querySelectorAll("[data-map-year]").forEach((button) => {
+    button.addEventListener("click", () => {
+      renderYear(button.dataset.mapYear);
+      showAll();
+    });
+  });
 
   document.querySelectorAll("[data-map-action]").forEach((button) => {
     button.addEventListener("click", () => {
