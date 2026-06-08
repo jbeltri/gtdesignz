@@ -129,6 +129,31 @@
       project("WS1 4NW", "17 Duchess Road", "Architectural and structural design"),
       project("B21 9ST", "145 Soho Road", "Commercial design package"),
       project("LU4 8PY", "116-124 Wingate Road", "Architectural design coordination")
+    ],
+    "2026": [
+      project("ST5 3TZ", "12 Bordeaux Walk", "Structural calculations and technical updates"),
+      project("TW3 2NS", "152 Heath Road", "Drawing and CAD conversion"),
+      project("ST4 1DJ", "36-42 Church Street", "Detailed plans, energy, drainage and heritage work"),
+      project("UB6 8JN", "90 Thames Avenue", "Beam calculations and site plans"),
+      project("B21 9ST", "145 Soho Road", "Commercial plans, stairs, joists and Building Regulations"),
+      project("UB7 7AA", "3 Ferrers Avenue", "Updated beam calculations"),
+      project("WV4 6QH", "104 Farrington Road", "Planning updates and structural calculations"),
+      project("B74 2LG", "44 Thornhill Park", "Extension plans and structural calculations"),
+      project("B13 9LU", "2 Bankside, Moseley", "Beam calculations"),
+      project("B93 9JW", "88 Barcheston Road", "Build-over design and structural calculations"),
+      project("WS5 3LF", "12 Beacon Road", "Detailed plans and structural calculations"),
+      project("WV3 7DT", "7 Duke Street", "U-value calculations"),
+      project("TW5 0AD", "9 and 11 Shenley Road", "Updated structural calculations"),
+      project("WV4 5HD", "33 Dudley Walk", "Wall-removal structural calculations"),
+      project("B70 9AL", "178 Dudley Street", "Steel beam calculations"),
+      project("WV2 2LZ", "80 George Street", "Detailed plans and foundation design"),
+      project("B66 4JU", "25-27 Waterloo Road", "EPC, SAP and CAD documentation"),
+      project("HA4 0NW", "177 Queens Walk", "As-built elevation drawings"),
+      project("WS5 4LB", "60 Redwood Road", "Loadbearing wall and beam calculations"),
+      project("TW7 5HH", "115 Roxborough Avenue", "Detailed plans and structural calculations"),
+      project("WS8 6LA", "G J F Fabrications Ltd, The Chase Link", "Scaled A0 drawing package"),
+      project("WD4 8JW", "Old Farm, Harthall Lane", "Planning review and proposal development"),
+      project("GU1 4AW", "71-72 North Street", "Land Registry-compliant plans")
     ]
   };
 
@@ -149,6 +174,9 @@
     const hash = [...borough].reduce((total, character) => total + character.charCodeAt(0), 0);
     return boroughColours[hash % boroughColours.length];
   };
+  const postcodeOverrides = new Map([
+    ["WS8 6LA", { borough: "Walsall", coords: [-1.920646, 52.652269] }]
+  ]);
   const allPostcodes = [...new Set(
     Object.values(projectYears).flat().map(({ postcode }) => normalizePostcode(postcode))
   )];
@@ -176,6 +204,9 @@
         borough: result.admin_district || result.region || "United Kingdom",
         coords: [result.longitude, result.latitude]
       });
+    });
+    postcodeOverrides.forEach((location, postcode) => {
+      postcodeLocations.set(postcode, location);
     });
   };
 
@@ -259,7 +290,7 @@
   });
 
   map.touchZoomRotate.disableRotation();
-  let activeYear = "2025";
+  let activeYear = "2026";
   let mapMarkers = [];
 
   const clearMarkers = () => {
