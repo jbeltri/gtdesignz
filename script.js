@@ -58,11 +58,16 @@ const locations = [
 if (document.querySelector("#project-map") && window.L) {
   const map = L.map("project-map", {
     scrollWheelZoom: false,
-    zoomControl: true
-  }).setView([52.1, -1.25], 6);
+    doubleClickZoom: false,
+    boxZoom: false,
+    keyboard: false,
+    zoomControl: false,
+    minZoom: 6,
+    maxZoom: 14
+  });
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 18,
+    maxZoom: 14,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
   }).addTo(map);
 
@@ -74,14 +79,40 @@ if (document.querySelector("#project-map") && window.L) {
     tooltipAnchor: [0, -22]
   });
 
+  const clusters = L.markerClusterGroup({
+    showCoverageOnHover: false,
+    spiderfyOnMaxZoom: true,
+    disableClusteringAtZoom: 10,
+    maxClusterRadius: 65,
+    zoomToBoundsOnClick: true
+  });
+
   locations.forEach((location) => {
-    L.marker(location.coords, { icon: markerIcon })
-      .addTo(map)
+    const marker = L.marker(location.coords, { icon: markerIcon })
       .bindTooltip(`<strong>${location.name}</strong>${location.brief}`, {
         direction: "top",
         opacity: 1
       })
       .bindPopup(`<strong>${location.name}</strong><br>${location.brief}`);
+    clusters.addLayer(marker);
+  });
+
+  map.addLayer(clusters);
+  const projectBounds = L.latLngBounds(locations.map((location) => location.coords));
+  const showAll = () => map.fitBounds(projectBounds, {
+    padding: [42, 42],
+    maxZoom: 7
+  });
+
+  showAll();
+
+  document.querySelectorAll("[data-map-action]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const action = button.dataset.mapAction;
+      if (action === "in") map.zoomIn();
+      if (action === "out") map.zoomOut();
+      if (action === "all") showAll();
+    });
   });
 }
 

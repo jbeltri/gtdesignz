@@ -572,12 +572,81 @@ h3 {
   color: var(--coral);
 }
 
+.map-frame {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #dce4df;
+}
+
 #project-map {
   width: 100%;
   min-height: 560px;
-  border-radius: var(--radius);
-  filter: saturate(0.78) contrast(1.04);
+  filter: saturate(0.72) contrast(1.03);
   z-index: 1;
+}
+
+.map-toolbar {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 410;
+  display: flex;
+  gap: 6px;
+  padding: 6px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(16, 27, 26, 0.16);
+  border-radius: 4px;
+  box-shadow: 0 8px 22px rgba(16, 27, 26, 0.14);
+}
+
+.map-toolbar button {
+  display: inline-flex;
+  min-width: 38px;
+  height: 38px;
+  padding: 0 10px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  color: var(--ink);
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  cursor: pointer;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.map-toolbar button:hover {
+  color: var(--white);
+  background: var(--teal);
+  border-color: var(--teal);
+}
+
+.map-toolbar svg {
+  width: 16px;
+  height: 16px;
+}
+
+.marker-cluster-small,
+.marker-cluster-medium,
+.marker-cluster-large {
+  background: rgba(13, 107, 98, 0.24);
+}
+
+.marker-cluster-small div,
+.marker-cluster-medium div,
+.marker-cluster-large div {
+  color: var(--white);
+  background: var(--teal);
+  font-family: "Manrope", sans-serif;
+  font-weight: 800;
+}
+
+.leaflet-control-zoom {
+  display: none;
 }
 
 .leaflet-tooltip {
@@ -1268,6 +1337,16 @@ h3 {
 
   #project-map {
     min-height: 440px;
+  }
+
+  .map-toolbar {
+    top: 10px;
+    right: 10px;
+  }
+
+  .map-toolbar button {
+    min-width: 36px;
+    height: 36px;
   }
 
   .process-list {
