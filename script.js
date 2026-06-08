@@ -131,7 +131,17 @@ const boroughs2025 = [
   { name: "Three Rivers", coords: [-0.4375, 51.7203], projects: ["WD4 8JW - householder extension and planning design"] }
 ];
 
-const projectYears = { "2024": boroughs2024, "2025": boroughs2025 };
+const boroughs2023 = [
+  {
+    name: "City of Coventry",
+    coords: [-1.51, 52.406],
+    projects: [
+      "Postcode unavailable - residential development and structural design support"
+    ]
+  }
+];
+
+const projectYears = { "2023": boroughs2023, "2024": boroughs2024, "2025": boroughs2025 };
 
 if (document.querySelector("#project-map") && window.maplibregl) {
   const map = new maplibregl.Map({
