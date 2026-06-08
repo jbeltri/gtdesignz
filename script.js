@@ -41,76 +41,87 @@ const observer = new IntersectionObserver((entries) => {
 
 document.querySelectorAll(".reveal").forEach((element) => observer.observe(element));
 
-const locations = [
-  { name: "Guildford", brief: "Retail demise and Land Registry plan coordination", coords: [51.2362, -0.5704] },
-  { name: "Wolverhampton", brief: "Building Regulations, structural packages and technical details", coords: [52.5862, -2.1285] },
-  { name: "Birmingham", brief: "Multi-level commercial and residential conversion design", coords: [52.4862, -1.8904] },
-  { name: "Walsall", brief: "Residential plans, steel calculations and foundation coordination", coords: [52.586, -1.9829] },
-  { name: "Stoke-on-Trent", brief: "Heritage drawings, schedules and roof details", coords: [53.0027, -2.1794] },
-  { name: "Hayes", brief: "Outbuilding design and foundation strategy near trees", coords: [51.5123, -0.42] },
-  { name: "Hounslow & Isleworth", brief: "Residential extensions, detailed plans and structural calculations", coords: [51.4684, -0.3618] },
-  { name: "Greenford", brief: "Existing and proposed plans with site coordination", coords: [51.5281, -0.355] },
-  { name: "North London", brief: "Beam calculations, SAP coordination and opening details", coords: [51.614, -0.141] },
-  { name: "Lichfield area", brief: "Industrial layout and large-format technical drawing coordination", coords: [52.647, -1.93] },
-  { name: "Milton Keynes", brief: "Regional architectural and technical project support", coords: [52.0406, -0.7594] }
+const regions = [
+  {
+    name: "London & South East",
+    coords: [-0.34, 51.5],
+    projects: [
+      "Guildford — retail and Land Registry plans",
+      "Hayes — outbuilding and foundation strategy",
+      "Hounslow & Isleworth — residential extensions",
+      "Greenford — existing and proposed plans",
+      "North London — structural and energy coordination"
+    ]
+  },
+  {
+    name: "West Midlands",
+    coords: [-1.99, 52.57],
+    projects: [
+      "Wolverhampton — Building Regulations and structural packages",
+      "Birmingham — mixed-use conversion design",
+      "Walsall — residential and foundation coordination",
+      "Lichfield area — industrial drawing production",
+      "Stoke-on-Trent — heritage drawing coordination"
+    ]
+  },
+  {
+    name: "Milton Keynes",
+    coords: [-0.7594, 52.0406],
+    projects: [
+      "Regional architectural design support",
+      "Technical drawings and project coordination"
+    ]
+  }
 ];
 
-if (document.querySelector("#project-map") && window.L) {
-  const map = L.map("project-map", {
-    scrollWheelZoom: false,
-    doubleClickZoom: false,
-    boxZoom: false,
-    keyboard: false,
-    zoomControl: false,
-    minZoom: 6,
-    maxZoom: 14
+if (document.querySelector("#project-map") && window.maplibregl) {
+  const map = new maplibregl.Map({
+    container: "project-map",
+    style: "https://tiles.openfreemap.org/styles/liberty",
+    center: [-1.15, 52.05],
+    zoom: 5.7,
+    minZoom: 5,
+    maxZoom: 13,
+    scrollZoom: false,
+    dragRotate: false,
+    pitchWithRotate: false,
+    touchPitch: false,
+    attributionControl: true
   });
 
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 14,
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-  }).addTo(map);
+  map.touchZoomRotate.disableRotation();
 
-  const markerIcon = L.divIcon({
-    className: "",
-    html: '<div class="custom-marker"><span></span></div>',
-    iconSize: [28, 28],
-    iconAnchor: [14, 28],
-    tooltipAnchor: [0, -22]
+  regions.forEach((region) => {
+    const element = document.createElement("button");
+    element.className = "regional-marker";
+    element.type = "button";
+    element.title = region.name;
+    element.setAttribute("aria-label", `${region.name}: ${region.projects.length} project areas`);
+    element.innerHTML = `<span>${region.projects.length}</span>`;
+
+    const projectList = region.projects.map((project) => `<li>${project}</li>`).join("");
+    const popup = new maplibregl.Popup({ offset: 30, closeButton: true })
+      .setHTML(`<strong>${region.name}</strong><ul>${projectList}</ul>`);
+
+    new maplibregl.Marker({ element, anchor: "bottom" })
+      .setLngLat(region.coords)
+      .setPopup(popup)
+      .addTo(map);
   });
 
-  const clusters = L.markerClusterGroup({
-    showCoverageOnHover: false,
-    spiderfyOnMaxZoom: true,
-    disableClusteringAtZoom: 10,
-    maxClusterRadius: 65,
-    zoomToBoundsOnClick: true
-  });
+  const showAll = () => {
+    const bounds = new maplibregl.LngLatBounds();
+    regions.forEach((region) => bounds.extend(region.coords));
+    map.fitBounds(bounds, { padding: 75, maxZoom: 6.2, duration: 700 });
+  };
 
-  locations.forEach((location) => {
-    const marker = L.marker(location.coords, { icon: markerIcon })
-      .bindTooltip(`<strong>${location.name}</strong>${location.brief}`, {
-        direction: "top",
-        opacity: 1
-      })
-      .bindPopup(`<strong>${location.name}</strong><br>${location.brief}`);
-    clusters.addLayer(marker);
-  });
-
-  map.addLayer(clusters);
-  const projectBounds = L.latLngBounds(locations.map((location) => location.coords));
-  const showAll = () => map.fitBounds(projectBounds, {
-    padding: [42, 42],
-    maxZoom: 7
-  });
-
-  showAll();
+  map.on("load", showAll);
 
   document.querySelectorAll("[data-map-action]").forEach((button) => {
     button.addEventListener("click", () => {
       const action = button.dataset.mapAction;
-      if (action === "in") map.zoomIn();
-      if (action === "out") map.zoomOut();
+      if (action === "in") map.zoomIn({ duration: 350 });
+      if (action === "out") map.zoomOut({ duration: 350 });
       if (action === "all") showAll();
     });
   });
