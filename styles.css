@@ -685,6 +685,14 @@ h3 {
   font-size: 1rem;
 }
 
+.maplibregl-popup-content small {
+  display: block;
+  margin: -4px 0 8px;
+  color: var(--muted);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+}
+
 .maplibregl-popup-content ul {
   margin: 0;
   padding-left: 17px;

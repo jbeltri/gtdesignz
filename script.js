@@ -74,6 +74,45 @@ const regions = [
   }
 ];
 
+const boroughs = [
+  {
+    name: "City of Wolverhampton",
+    coords: [-2.128, 52.586],
+    projects: [
+      "WV6 9NL - structural plans and reports",
+      "WV6 0JJ - detailed plans and structural calculations",
+      "WV3 7DT - architectural and technical design",
+      "WV4 5HD - residential design coordination",
+      "WV2 2LZ - technical drawing package"
+    ]
+  },
+  {
+    name: "Walsall",
+    coords: [-1.982, 52.586],
+    projects: [
+      "WS5 3AE - drawing and design coordination",
+      "WS3 2SQ - raft foundation and structural calculations",
+      "WS5 3LF - residential technical design"
+    ]
+  },
+  {
+    name: "London Borough of Hounslow",
+    coords: [-0.36, 51.468],
+    projects: [
+      "TW5 0AD - residential design package",
+      "TW13 5PD - extension beam calculations"
+    ]
+  },
+  { name: "London Borough of Haringey", coords: [-0.111, 51.59], projects: ["N11 2PR - beam calculations and energy coordination"] },
+  { name: "London Borough of Hillingdon", coords: [-0.45, 51.54], projects: ["UB3 4PD - outbuilding and raft foundation design"] },
+  { name: "London Borough of Ealing", coords: [-0.308, 51.513], projects: ["UB6 8JN - existing and proposed plans"] },
+  { name: "London Borough of Brent", coords: [-0.281, 51.558], projects: ["HA0 4RW - architectural drawings"] },
+  { name: "Birmingham", coords: [-1.89, 52.486], projects: ["B74 4BN - loft floor structural calculations"] },
+  { name: "Dudley", coords: [-2.082, 52.512], projects: ["DY8 3NY - construction junction and waterproofing details"] },
+  { name: "Slough", coords: [-0.595, 51.51], projects: ["SL3 8UR - structural calculations and joint report"] },
+  { name: "Stoke-on-Trent", coords: [-2.179, 53.003], projects: ["ST4 1DJ - heritage drawing coordination"] }
+];
+
 if (document.querySelector("#project-map") && window.maplibregl) {
   const map = new maplibregl.Map({
     container: "project-map",
@@ -91,27 +130,28 @@ if (document.querySelector("#project-map") && window.maplibregl) {
 
   map.touchZoomRotate.disableRotation();
 
-  regions.forEach((region) => {
+  boroughs.forEach((borough) => {
     const element = document.createElement("button");
     element.className = "regional-marker";
     element.type = "button";
-    element.title = region.name;
-    element.setAttribute("aria-label", `${region.name}: ${region.projects.length} project areas`);
-    element.innerHTML = `<span>${region.projects.length}</span>`;
+    element.title = borough.name;
+    const projectLabel = borough.projects.length === 1 ? "project" : "projects";
+    element.setAttribute("aria-label", `${borough.name}: ${borough.projects.length} ${projectLabel} in 2024`);
+    element.innerHTML = `<span>${borough.projects.length}</span>`;
 
-    const projectList = region.projects.map((project) => `<li>${project}</li>`).join("");
+    const projectList = borough.projects.map((project) => `<li>${project}</li>`).join("");
     const popup = new maplibregl.Popup({ offset: 30, closeButton: true })
-      .setHTML(`<strong>${region.name}</strong><ul>${projectList}</ul>`);
+      .setHTML(`<strong>${borough.name}</strong><small>2024 projects</small><ul>${projectList}</ul>`);
 
     new maplibregl.Marker({ element, anchor: "bottom" })
-      .setLngLat(region.coords)
+      .setLngLat(borough.coords)
       .setPopup(popup)
       .addTo(map);
   });
 
   const showAll = () => {
     const bounds = new maplibregl.LngLatBounds();
-    regions.forEach((region) => bounds.extend(region.coords));
+    boroughs.forEach((borough) => bounds.extend(borough.coords));
     map.fitBounds(bounds, { padding: 75, maxZoom: 6.2, duration: 700 });
   };
 
