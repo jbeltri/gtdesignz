@@ -1196,6 +1196,25 @@ h3 {
   border-top: 1px solid #33403d;
 }
 
+.footer-credit {
+  grid-column: 1 / -1;
+  margin: -24px 0 0;
+  color: #dce3e1;
+}
+
+.footer-credit a {
+  color: var(--white);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: var(--teal);
+  text-underline-offset: 4px;
+}
+
+.footer-credit a:hover,
+.footer-credit a:focus-visible {
+  color: var(--teal-light);
+}
+
 .reveal {
   opacity: 0;
   transform: translateY(26px);
