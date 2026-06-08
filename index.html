@@ -19,7 +19,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.6.1/dist/maplibre-gl.css">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=20260608-map">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -243,9 +243,10 @@
     <section class="section map-section" id="locations">
       <div class="map-copy reveal">
         <p class="eyebrow">Project reach</p>
-        <h2>Projects grouped by borough</h2>
-        <p>Explore verified project locations from 2023 to 2025, grouped by local authority area.</p>
-        <p class="map-hint"><i data-lucide="mouse-pointer-2"></i> Select a numbered borough marker to view project postcodes and services.</p>
+        <h2>Projects mapped by precise postcode</h2>
+        <p>Explore verified project locations from 2023 to 2025. Each location uses its postcode centre and identifies its local authority area.</p>
+        <p class="map-hint"><i data-lucide="mouse-pointer-2"></i> Select a borough group to zoom in, then select a postcode point to view the project.</p>
+        <p class="map-summary" id="map-summary" aria-live="polite">Loading verified project locations...</p>
       </div>
       <div class="map-frame">
         <div class="map-toolbar" aria-label="Map controls">
@@ -256,9 +257,9 @@
           </div>
           <button type="button" data-map-action="in" aria-label="Zoom in" title="Zoom in"><i data-lucide="plus"></i></button>
           <button type="button" data-map-action="out" aria-label="Zoom out" title="Zoom out"><i data-lucide="minus"></i></button>
-          <button type="button" data-map-action="all"><i data-lucide="maximize-2"></i><span>View all</span></button>
+          <button type="button" data-map-action="all" aria-label="View all project locations" title="View all project locations"><i data-lucide="maximize-2"></i><span>View all</span></button>
         </div>
-        <div id="project-map" aria-label="Interactive map of GT Designz project locations grouped by borough"></div>
+        <div id="project-map" aria-label="Interactive map of GT Designz project locations by verified postcode"></div>
       </div>
     </section>
 
@@ -356,6 +357,7 @@
 
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
   <script src="https://unpkg.com/maplibre-gl@5.6.1/dist/maplibre-gl.js"></script>
+  <script src="project-map.js?v=20260608-map"></script>
   <script src="script.js"></script>
 </body>
 </html>
