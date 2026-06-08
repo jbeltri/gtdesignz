@@ -30,6 +30,56 @@ document.querySelectorAll("[data-slide]").forEach((button) => {
   });
 });
 
+const heroImage = document.querySelector("[data-time-hero]");
+const heroSources = {
+  dawn: "assets/images/residential-extension-dawn.webp",
+  morning: "assets/images/residential-extension-morning.webp",
+  midday: "assets/images/residential-extension-midday.webp",
+  afternoon: "assets/images/residential-extension-afternoon.webp",
+  dusk: "assets/images/residential-extension-concept.webp",
+  night: "assets/images/residential-extension-night.webp"
+};
+
+const getHeroPeriod = (hour) => {
+  if (hour >= 5 && hour < 8) return "dawn";
+  if (hour >= 8 && hour < 11) return "morning";
+  if (hour >= 11 && hour < 14) return "midday";
+  if (hour >= 14 && hour < 18) return "afternoon";
+  if (hour >= 18 && hour < 23) return "dusk";
+  return "night";
+};
+
+let activeHeroPeriod = "";
+const updateHeroForLocalTime = () => {
+  if (!heroImage) return;
+
+  const period = getHeroPeriod(new Date().getHours());
+  if (period === activeHeroPeriod) return;
+
+  activeHeroPeriod = period;
+  heroImage.dataset.dayPeriod = period;
+  heroImage.closest(".hero")?.setAttribute("data-day-period", period);
+
+  const source = heroSources[period];
+  if (heroImage.getAttribute("src") === source) return;
+
+  const loader = new Image();
+  loader.decoding = "async";
+  loader.src = source;
+  loader.addEventListener("load", () => {
+    if (activeHeroPeriod !== period) return;
+
+    heroImage.classList.add("is-updating");
+    window.setTimeout(() => {
+      heroImage.src = source;
+      window.requestAnimationFrame(() => heroImage.classList.remove("is-updating"));
+    }, 180);
+  }, { once: true });
+};
+
+updateHeroForLocalTime();
+window.setInterval(updateHeroForLocalTime, 60_000);
+
 const observer = new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
     if (entry.isIntersecting) {
