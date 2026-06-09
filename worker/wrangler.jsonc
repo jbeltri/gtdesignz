@@ -1,0 +1,10 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "gtdesignz-intake",
+  "main": "src/index.js",
+  "compatibility_date": "2026-06-09",
+  "vars": {
+    "ALLOWED_ORIGINS": "https://jbeltri.github.io,http://localhost:4173",
+    "NOTION_DATA_SOURCE_ID": "0d9dd55c-4fb8-4177-94f3-cd6b6ed1ee51"
+  }
+}
