@@ -59,6 +59,8 @@
 
   let hasOpened = false;
   let intake = null;
+  let assistantQueue = Promise.resolve();
+  let pendingAssistantTasks = 0;
 
   const initialActions = [
     ["Start a project brief", "start"],
@@ -68,6 +70,17 @@
     ["Party Wall", "party-wall"],
     ["Budget orientation", "budget"],
     ["Dispute or callback", "dispute"]
+  ];
+
+  const greetings = [
+    `<p>Hello. I can help you shape a project brief, understand the RIBA stages, and find the right route for planning, building over sewers, Party Wall matters and early budget review.</p>
+    <p>What would you like help with?</p>`,
+    `<p>Welcome to GT Designz. Tell me what you are planning and I can help organise the brief, likely approvals and next project stage.</p>
+    <p>Where would you like to begin?</p>`,
+    `<p>Good to meet you. I can guide you through early project questions, planning history, RIBA stages, budget orientation and neighbour or sewer considerations.</p>
+    <p>How can I help with the property?</p>`,
+    `<p>Let's make the next step clearer. I can collect your project details or explain planning, Building Regulations, Party Wall and build-over routes.</p>
+    <p>What are you working on?</p>`
   ];
 
   const escapeHtml = (value) => String(value)
@@ -81,8 +94,42 @@
     `<a href="${href}" target="_blank" rel="noopener noreferrer">${label}<i data-lucide="external-link"></i></a>`;
 
   const refreshIcons = () => window.lucide?.createIcons();
+  const wait = (duration) => new Promise((resolve) => window.setTimeout(resolve, duration));
 
-  const addMessage = (role, content, options = {}) => {
+  const getNextGreeting = () => {
+    let index = 0;
+    try {
+      index = Number.parseInt(localStorage.getItem("gt-assistant-greeting") || "0", 10);
+      if (!Number.isFinite(index)) index = 0;
+      localStorage.setItem("gt-assistant-greeting", String((index + 1) % greetings.length));
+    } catch {
+      index = Math.floor(Math.random() * greetings.length);
+    }
+    return greetings[index % greetings.length];
+  };
+
+  const setResponding = (responding) => {
+    widget.classList.toggle("is-responding", responding);
+    input.disabled = responding;
+    form.querySelector("button").disabled = responding;
+  };
+
+  const enqueueAssistantTask = (task) => {
+    pendingAssistantTasks += 1;
+    setResponding(true);
+    assistantQueue = assistantQueue
+      .then(task)
+      .finally(() => {
+        pendingAssistantTasks -= 1;
+        if (pendingAssistantTasks === 0) {
+          setResponding(false);
+          if (!panel.hidden) input.focus();
+        }
+      });
+    return assistantQueue;
+  };
+
+  const appendMessage = (role, content, options = {}) => {
     const article = document.createElement("article");
     article.className = `gt-assistant-message is-${role}`;
     article.innerHTML = options.html ? content : `<p>${escapeHtml(content)}</p>`;
@@ -91,14 +138,40 @@
     refreshIcons();
   };
 
-  const showQuickReplies = (items = initialActions) => {
+  const addMessage = (role, content, options = {}) => {
+    if (role !== "assistant") {
+      appendMessage(role, content, options);
+      return Promise.resolve();
+    }
+
     quick.replaceChildren();
-    items.forEach(([label, action]) => {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.textContent = label;
-      button.dataset.action = action;
-      quick.append(button);
+    return enqueueAssistantTask(async () => {
+      const typing = document.createElement("article");
+      typing.className = "gt-assistant-message is-assistant is-typing";
+      typing.setAttribute("aria-label", "GT Designz is typing");
+      typing.innerHTML = `<span></span><span></span><span></span>`;
+      messages.append(typing);
+      messages.scrollTop = messages.scrollHeight;
+
+      const textLength = String(content).replace(/<[^>]+>/g, "").length;
+      const typingDelay = options.typingDelay ?? Math.min(1250, 520 + textLength * 2);
+      await wait(typingDelay);
+
+      typing.remove();
+      appendMessage(role, content, options);
+    });
+  };
+
+  const showQuickReplies = (items = initialActions) => {
+    return enqueueAssistantTask(() => {
+      quick.replaceChildren();
+      items.forEach(([label, action]) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = label;
+        button.dataset.action = action;
+        quick.append(button);
+      });
     });
   };
 
@@ -108,12 +181,7 @@
     widget.classList.add("is-open");
     if (!hasOpened) {
       hasOpened = true;
-      addMessage(
-        "assistant",
-        `<p>Hello. I can help you shape a project brief, understand the RIBA stages, and find the right route for planning, building over sewers, Party Wall matters and early budget review.</p>
-        <p>What would you like help with?</p>`,
-        { html: true }
-      );
+      addMessage("assistant", getNextGreeting(), { html: true, typingDelay: 780 });
       showQuickReplies();
     }
     window.setTimeout(() => input.focus(), 120);
@@ -129,7 +197,7 @@
   const resetChat = () => {
     intake = null;
     input.placeholder = "Ask about your project...";
-    addMessage("assistant", "No problem. What project topic can I help with?");
+    addMessage("assistant", getNextGreeting(), { html: true });
     showQuickReplies();
   };
 
